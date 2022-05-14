@@ -7,17 +7,6 @@
   export let traffic: LineTraffic;
   export let type: LineType;
 
-  let hover = false;
-
-  function setHoverTrue(e) {
-    console.log(e.target);
-    hover = true;
-  }
-
-  function setHoverFalse() {
-    hover = false;
-  }
-
   $: hasWorks = traffic.slug.includes("trav");
   $: hasIncidents = traffic.slug === "critical";
   $: classNames = cx("relative flex-shrink-0 p-1.5 sm:p-2.5 transition-shadow bg-white shadow cursor-pointer hover:shadow-lg cursor rounded-lg sm:rounded-xl", {
@@ -26,23 +15,23 @@
   });
 </script>
 
-<div class="relative">
-  {#if hover}
-    <div class="absolute bottom-[calc(100%+10px)] w-72 p-4 space-y-1 text-sm bg-white shadow-lg z-[999999]">
-      <div
-        class={cx("font-semibold", {
-          "text-green-600": traffic.slug === "normal",
-          "text-red-500": hasIncidents,
-          "text-orange-500": hasWorks,
-        })}
-      >
-        {traffic.title}
-      </div>
-      <div>{traffic.message}</div>
+<div class="relative group">
+  <!-- {#if hover} -->
+  <div class="absolute hidden group-hover:block -translate-x-1/2 left-1/2 bottom-[calc(100%+10px)] rounded-lg w-72 p-4 space-y-1 text-sm bg-white shadow-xl z-[999999]">
+    <div
+      class={cx("font-semibold", {
+        "text-green-600": traffic.slug === "normal",
+        "text-red-500": hasIncidents,
+        "text-orange-500": hasWorks,
+      })}
+    >
+      {traffic.title}
     </div>
-  {/if}
+    <div>{traffic.message}</div>
+  </div>
+  <!-- {/if} -->
   <Link to={`/ligne/${type}/${traffic.line}`}>
-    <div class={classNames} on:mouseenter={setHoverTrue} on:mouseleave={setHoverFalse}>
+    <div class={classNames}>
       <img class="w-7 sm:w-8" src={`/img/lines/${type}/${traffic.line}.svg`} alt={`Ligne ${traffic.line}`} />
     </div>
   </Link>

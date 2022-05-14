@@ -1,8 +1,35 @@
 <script lang="ts">
-  import { useLocation, useParams } from "svelte-navigator";
+  import { traffic } from "../../stores/data";
+
+  import { Link, useParams } from "svelte-navigator";
+  import type { Traffic } from "../../lib/ratp";
+  import { cx } from "../../lib/cx";
+
   const params = useParams();
 
-  console.log($params);
+  const line = $traffic[`${$params.type}s` as keyof Traffic].find((line) => line.line === $params.id);
+
+  console.log({ line });
 </script>
 
-<div>ligne {$params.type} {$params.id}</div>
+<div class="space-y-5">
+  <Link to="/" class="text-blue-500 rounded-lg font-medium bg-gray-100 hover:bg-gray-200 px-3 py-1 inline-block">← Retour</Link>
+  <div class="flex space-x-2">
+    <img class="w-16" src={`/img/${$params.type}.svg`} alt="$params.type" />
+    <img class="w-16" src={`/img/lines/${$params.type}/${$params.id}.svg`} alt={`Ligne ${$params.id}`} />
+  </div>
+  {#if line.slug !== "normal"}
+    <div
+      class={cx("p-4 mb-4 space-y-1 text-sm text-red-700 bg-red-100 rounded-lg ", {
+        "bg-red-100 text-red-700": line.slug === "critical",
+        "bg-orange-100 text-orange-700": line.slug === "normal_trav",
+      })}
+      role="alert"
+    >
+      <div class="font-medium">{line.title}</div>
+      <div>
+        {line.message}
+      </div>
+    </div>
+  {/if}
+</div>
