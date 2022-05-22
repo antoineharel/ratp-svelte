@@ -2,21 +2,27 @@
   import { traffic } from "../../stores/data";
 
   import { Link, useParams } from "svelte-navigator";
-  import type { Traffic } from "../../lib/ratp";
+  import { PluralLineType, ratp, Traffic } from "../../lib/ratp";
   import { cx } from "../../lib/cx";
 
   const params = useParams();
 
   const line = $traffic[`${$params.type}s` as keyof Traffic].find((line) => line.line === $params.id);
 
-  console.log({ line });
+  const load = async () => {
+    const stations = await ratp.stations(`${$params.type}s` as PluralLineType, line.line);
+
+    return { stations };
+  };
+
+  const data = load();
 </script>
 
 <div class="space-y-5">
   <Link to="/" class="text-blue-500 rounded-lg font-medium bg-gray-100 hover:bg-gray-200 px-3 py-1 inline-block">← Retour</Link>
-  <div class="flex space-x-2">
-    <img class="w-16" src={`/img/${$params.type}.svg`} alt="$params.type" />
-    <img class="w-16" src={`/img/lines/${$params.type}/${$params.id}.svg`} alt={`Ligne ${$params.id}`} />
+  <div class="flex space-x-1 md:space-x-2">
+    <img class="w-8 md:w-16" src={`/img/${$params.type}.svg`} alt="$params.type" />
+    <img class="w-8 md:w-16" src={`/img/lines/${$params.type}/${$params.id}.svg`} id="line-logo" alt={`Ligne ${$params.id}`} />
   </div>
   {#if line.slug !== "normal"}
     <div
@@ -32,4 +38,13 @@
       </div>
     </div>
   {/if}
+  <div class="max-h-72 overflow-y-auto bg-white p-3 border">
+    {#await data then data}
+      {#each data.stations as station}
+        <div class="font-medium">
+          {station.name}
+        </div>
+      {/each}
+    {/await}
+  </div>
 </div>

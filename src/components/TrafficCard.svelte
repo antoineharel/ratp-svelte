@@ -16,7 +16,6 @@
 </script>
 
 <div class="relative group">
-  <!-- {#if hover} -->
   <div class="absolute hidden group-hover:block -translate-x-1/2 left-1/2 bottom-[calc(100%+10px)] rounded-lg w-72 p-4 space-y-1 text-sm bg-white shadow-xl z-[999999]">
     <div
       class={cx("font-semibold", {
@@ -29,7 +28,6 @@
     </div>
     <div>{traffic.message}</div>
   </div>
-  <!-- {/if} -->
   <Link to={`/ligne/${type}/${traffic.line}`}>
     <div class={classNames}>
       <img class="w-7 sm:w-8" src={`/img/lines/${type}/${traffic.line}.svg`} alt={`Ligne ${traffic.line}`} />
